@@ -51,8 +51,8 @@ SpaceX-Falcon9-Landing-Prediction/
 ## 🔬 Methodology
 
 ### 1. Data Collection
-- **SpaceX REST API** - Retrieved historical launch records including payload mass, orbit type, launch site, and landing outcome
-- **Web Scraping (Wikipedia)** - Scraped Falcon 9 launch records table using BeautifulSoup
+- **SpaceX REST API** — Retrieved historical launch records including payload mass, orbit type, launch site, and landing outcome
+- **Web Scraping (Wikipedia)** — Scraped Falcon 9 launch records table using BeautifulSoup
 
 ### 2. Data Wrangling
 - Handled missing values (e.g., imputed PayloadMass with mean)
@@ -60,12 +60,12 @@ SpaceX-Falcon9-Landing-Prediction/
 - Filtered relevant columns for analysis
 
 ### 3. Exploratory Data Analysis (EDA)
-- **SQL Queries** - Analyzed launch sites, payload ranges, success rates by orbit
-- **Visualizations** - Flight number vs. launch site, payload vs. orbit type, yearly success trends
+- **SQL Queries** — Analyzed launch sites, payload ranges, success rates by orbit
+- **Visualizations** — Flight number vs. launch site, payload vs. orbit type, yearly success trends
 
 ### 4. Interactive Visual Analytics
 - **Folium Maps** — Mapped all launch sites, marked success/failure outcomes, analyzed proximity to infrastructure
-- **Plotly Dash Dashboard** - Interactive pie charts and scatter plots to explore payload and success rates dynamically
+- **Plotly Dash Dashboard** — Interactive pie charts and scatter plots to explore payload and success rates dynamically
 
 ### 5. Predictive Analysis
 Trained and tuned four classification models:
@@ -74,7 +74,7 @@ Trained and tuned four classification models:
 - Decision Tree
 - K-Nearest Neighbors (KNN)
 
-Evaluated using **accuracy score** and **confusion matrices** on a test split, with **GridSearchCV** for hyperparameter tuning.
+Evaluated using **accuracy**, **F1 score**, **Jaccard score**, and **confusion matrices** on a held-out test split (80/20), with **GridSearchCV (cv=10)** for hyperparameter tuning. A **5-fold cross-validation F1 score** was used as the final tiebreaker.
 
 ---
 
@@ -100,8 +100,37 @@ Evaluated using **accuracy score** and **confusion matrices** on a test split, w
 - **KSC LC-39A** had the highest launch success rate among all launch sites
 - **Heavier payloads** showed varying success rates depending on the orbit type
 - **ES-L1, GEO, HEO, and SSO orbits** showed 100% success rates
-- All four ML models achieved **similar accuracy (~83%)**, with the **Decision Tree and SVM** performing best after tuning
+- All four ML models achieved **similar test accuracy (~83%)**, but further evaluation using F1, Jaccard, and cross-validation scores revealed meaningful differences
+- **Logistic Regression** was identified as the best overall model after rigorous multi-metric evaluation
 - **GridSearchCV** improved model performance by optimizing hyperparameters
+
+---
+
+## 📈 Model Results Summary
+
+All four models were evaluated on the held-out test set and ranked using 5-fold cross-validation F1 score as the tiebreaker.
+
+### Test Set Performance
+
+| Model | Accuracy | F1 Score | Jaccard Score |
+|---|---|---|---|
+| Logistic Regression | 83.33% | 0.8889 | 0.800 |
+| Support Vector Machine | 83.33% | 0.8889 | 0.800 |
+| K-Nearest Neighbors | 83.33% | 0.8889 | 0.800 |
+| Decision Tree | 50.00% | 0.4706 | 0.692 |
+
+### 5-Fold Cross-Validation F1 Score (Tiebreaker)
+
+| Rank | Model | Mean F1 | Std Dev |
+|---|---|---|---|
+| 🥇 1st | **Logistic Regression** | **0.8812** | ±0.0348 |
+| 🥈 2nd | K-Nearest Neighbors | 0.8744 | ±0.0145 |
+| 🥉 3rd | Support Vector Machine | 0.8651 | ±0.0213 |
+| ❌ 4th | Decision Tree | 0.8058 | ±0.0916 |
+
+### 🏆 Winner: Logistic Regression
+
+Logistic Regression achieves the **highest cross-validation F1 score (0.8812)**, demonstrating the best generalisation across unseen data. Despite being the simplest model, it outperforms SVM, KNN, and Decision Tree. The Decision Tree is the weakest performer — it has the lowest F1 score and the highest variance (±0.0916), indicating instability across different data splits.
 
 ---
 
@@ -135,17 +164,6 @@ Then open your browser at `http://127.0.0.1:8050/`
 
 ---
 
-## 📈 Model Results Summary
-
-| Model | Best Accuracy |
-|---|---|
-| Logistic Regression | ~83% |
-| Support Vector Machine | ~83% |
-| Decision Tree | ~83% |
-| K-Nearest Neighbors | ~83% |
-
----
-
 ## 📁 Dataset
 
 - **Source**: [SpaceX REST API](https://api.spacexdata.com/v4/launches/past) and [Wikipedia](https://en.wikipedia.org/wiki/List_of_Falcon_9_and_Falcon_Heavy_launches)
@@ -157,10 +175,11 @@ Then open your browser at `http://127.0.0.1:8050/`
 
 ## 👤 Author
 
-**[Bolwin Mweemba**
-- IBM Data Science Professional Certificate - Capstone Project
+**Boldwin Mweemba**
+- IBM Data Science Professional Certificate — Capstone Project
 - [LinkedIn Profile](https://www.linkedin.com/in/boldwin-mweemba)
 - [GitHub](https://github.com/BoldwinMax)
+
 
 ---
 
